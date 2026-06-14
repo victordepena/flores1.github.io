@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro: Seminario de Salud Integral - Cuerpo Sano, Mente Sana</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .form-container { background: #ffffff; max-width: 520px; width: 100%; padding: 35px; border-top: 6px solid #002d56; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 4px; box-sizing: border-box; }
+        
+        /* Estilos para la cabecera doble con los nuevos logos */
+        .logo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+        .logo-left { max-width: 140px; height: auto; }
+        .logo-right { max-width: 150px; height: auto; }
+        
+        .header-title { color: #002d56; font-size: 20px; font-weight: bold; margin-bottom: 5px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-subtitle { color: #777777; font-size: 13px; text-align: center; margin-bottom: 20px; font-weight: 600; }
+        .event-banner { background-color: #f0f4f8; border-left: 4px solid #b28330; padding: 15px; margin-bottom: 25px; border-radius: 0 4px 4px 0; }
+        .event-banner p { margin: 6px 0; font-size: 14px; color: #333333; }
+        .guest-highlight { font-weight: bold; color: #002d56; }
+        .date-highlight, .location-highlight { color: #b28330; font-weight: bold; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; color: #444444; font-size: 14px; }
+        .required-mark { color: #cc0000; margin-left: 3px; }
+        input[type="text"], input[type="tel"] { width: 100%; padding: 11px; margin-bottom: 20px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; transition: border-color 0.2s; }
+        input:focus { border-color: #002d56; background-color: #ffffff; outline: none; }
+        .btn-submit { background-color: #002d56; color: white; border: none; padding: 13px; width: 100%; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.2s; letter-spacing: 0.5px; }
+        .btn-submit:hover { background-color: #001a33; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    
+    <!-- Cabecera de Logos Duplicados -->
+    <div class="logo-header">
+        <!-- Reemplaza 'RUTA_DE_TU_SERVIDOR/' por el enlace web real donde subas la imagen -->
+        <img src="logo iglesia.png" alt="Logo Iglesia Adventista" class="logo-left">
+        <img src="Logo-Salud-Adventista-gris.png" alt="Logo Ministerio de la Salud" class="logo-right">
+    </div>
+
+    <div class="header-title">Asociación Dominicana del Sureste</div>
+    <div class="header-subtitle">Departamento de Ministerios de la Salud</div>
+    
+    <!-- Detalles del Evento -->
+    <div class="event-banner">
+        <p><strong>Actividad:</strong> Seminario de Salud Integral: "Cuerpo Sano, Mente Sana"</p>
+        <p><strong>Expositora Especial:</strong> <span class="guest-highlight">Dra. Yaderis Barreiro</span></p>
+        <p><strong>Fecha y Hora:</strong> <span class="date-highlight">Domingo 19 de Julio, 2026 — 10:00 AM</span></p>
+        <p><strong>Lugar:</strong> <span class="location-highlight">Salón de Eventos Víctor Leger (2do Piso, ADOSE)</span></p>
+        <p style="font-size: 13px; color: #666; margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">Por favor, complete sus datos obligatorios para formalizar su inscripción y asegurar su cupo en el salón.</p>
+    </div>
+    
+    <!-- Formulario Seguro para GoPhish -->
+    <form method="POST">
+        
+        <label for="nombre">Nombre Completo:<span class="required-mark">*</span></label>
+        <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
+        
+        <label for="iglesia">Iglesia / Congregación:<span class="required-mark">*</span></label>
+        <input type="text" id="iglesia" name="iglesia" placeholder="Ej. Iglesia Central" required>
+        
+        <label for="telefono">Número de Teléfono / WhatsApp:<span class="required-mark">*</span></label>
+        <input type="tel" id="telefono" name="telefono" placeholder="Ej. 809-555-5555" required>
+        
+        <button type="submit" class="btn-submit">Confirmar Registro Obligatorio</button>
+    </form>
+</div>
+
+</body>
+</html>
