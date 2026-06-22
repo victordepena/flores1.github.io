@@ -2,68 +2,624 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro: Seminario de Salud Integral - Cuerpo Sano, Mente Sana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Musical</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .form-container { background: #ffffff; max-width: 520px; width: 100%; padding: 35px; border-top: 6px solid #002d56; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-radius: 4px; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+
+        :root {
+            --primary-color: #8a2be2; /* Púrpura Neón */
+            --secondary-color: #00ffcc; /* Cian Neón */
+            --bg-dark: #0b0c10;
+            --card-bg: rgba(31, 40, 51, 0.6);
+            --text-main: #c5c6c7;
+            --text-light: #ffffff;
+            --correct-color: #45a247;
+            --incorrect-color: #e94560;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-attachment: fixed;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .header-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--secondary-color);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .header-card h1 {
+            margin: 0 0 15px 0;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text-light);
+            letter-spacing: -0.5px;
+        }
+
+        .header-card p {
+            margin: 0;
+            color: var(--text-main);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .question-card.correct {
+            border-left: 6px solid var(--correct-color);
+            border-color: var(--correct-color);
+        }
+
+        .question-card.incorrect {
+            border-left: 6px solid var(--incorrect-color);
+            border-color: var(--incorrect-color);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin: 0;
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        .points-badge {
+            background: rgba(0, 255, 204, 0.1);
+            color: var(--secondary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .option-label:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-main);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        input[type="radio"]::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em var(--secondary-color);
+        }
+
+        input[type="radio"]:checked {
+            border-color: var(--secondary-color);
+        }
+
+        input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary-color), #b829ea);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 20px auto 40px auto;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.6);
+        }
+
+        #results {
+            display: none;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .score-display {
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .feedback {
+            font-size: 15px;
+            margin-top: 15px;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 8px;
+            display: none; /* Oculto por defecto */
+        }
+
+        .feedback.correct { 
+            display: block;
+            color: #fff;
+            background-color: rgba(69, 162, 71, 0.2);
+            border: 1px solid rgba(69, 162, 71, 0.3);
+        }
+        .feedback.incorrect { 
+            display: block;
+            color: #fff;
+            background-color: rgba(233, 69, 96, 0.2);
+            border: 1px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-light);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
         
-        /* Estilos para la cabecera doble con los nuevos logos */
-        .logo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
-        .logo-left { max-width: 140px; height: auto; }
-        .logo-right { max-width: 150px; height: auto; }
-        
-        .header-title { color: #002d56; font-size: 20px; font-weight: bold; margin-bottom: 5px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
-        .header-subtitle { color: #777777; font-size: 13px; text-align: center; margin-bottom: 20px; font-weight: 600; }
-        .event-banner { background-color: #f0f4f8; border-left: 4px solid #b28330; padding: 15px; margin-bottom: 25px; border-radius: 0 4px 4px 0; }
-        .event-banner p { margin: 6px 0; font-size: 14px; color: #333333; }
-        .guest-highlight { font-weight: bold; color: #002d56; }
-        .date-highlight, .location-highlight { color: #b28330; font-weight: bold; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; color: #444444; font-size: 14px; }
-        .required-mark { color: #cc0000; margin-left: 3px; }
-        input[type="text"], input[type="tel"] { width: 100%; padding: 11px; margin-bottom: 20px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 15px; background-color: #fafafa; transition: border-color 0.2s; }
-        input:focus { border-color: #002d56; background-color: #ffffff; outline: none; }
-        .btn-submit { background-color: #002d56; color: white; border: none; padding: 13px; width: 100%; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: background 0.2s; letter-spacing: 0.5px; }
-        .btn-submit:hover { background-color: #001a33; }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
 
-<div class="form-container">
-    
-    <!-- Cabecera de Logos Duplicados -->
-    <div class="logo-header">
-        <!-- Reemplaza 'RUTA_DE_TU_SERVIDOR/' por el enlace web real donde subas la imagen -->
-        <img src="logo iglesia.png" alt="Logo Iglesia Adventista" class="logo-left">
-        <img src="Logo-Salud-Adventista-gris.png" alt="Logo Ministerio de la Salud" class="logo-right">
+<div class="container">
+    <div class="header-card">
+        <h1>Cuestionario de Teoría Musical</h1>
+        <p>Demuestra tus conocimientos musicales respondiendo estas 20 preguntas. Al finalizar, haz clic en "Enviar" para ver tu puntuación.</p>
     </div>
 
-    <div class="header-title">Asociación Dominicana del Sureste</div>
-    <div class="header-subtitle">Departamento de Ministerios de la Salud</div>
-    
-    <!-- Detalles del Evento -->
-    <div class="event-banner">
-        <p><strong>Actividad:</strong> Seminario de Salud Integral: "Cuerpo Sano, Mente Sana"</p>
-        <p><strong>Expositora Especial:</strong> <span class="guest-highlight">Dra. Yaderis Barreiro</span></p>
-        <p><strong>Fecha y Hora:</strong> <span class="date-highlight">Domingo 19 de Julio, 2026 — 10:00 AM</span></p>
-        <p><strong>Lugar:</strong> <span class="location-highlight">Salón de Eventos Víctor Leger (2do Piso, ADOSE)</span></p>
-        <p style="font-size: 13px; color: #666; margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 8px;">Por favor, complete sus datos obligatorios para formalizar su inscripción y asegurar su cupo en el salón.</p>
+    <div id="results">
+        <h2>Tu Puntuación</h2>
+        <div class="score-display" id="scoreValue">0 / 20</div>
+        <p id="scoreMessage"></p>
+        <button class="submit-btn" onclick="location.reload()" style="margin-top: 20px; margin-bottom: 0;">Reintentar Cuestionario</button>
     </div>
-    
-    <!-- Formulario Seguro para GoPhish -->
-    <form method="POST">
-        
-        <label for="nombre">Nombre Completo:<span class="required-mark">*</span></label>
-        <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
-        
-        <label for="iglesia">Iglesia / Congregación:<span class="required-mark">*</span></label>
-        <input type="text" id="iglesia" name="iglesia" placeholder="Ej. Iglesia Central" required>
-        
-        <label for="telefono">Número de Teléfono / WhatsApp:<span class="required-mark">*</span></label>
-        <input type="tel" id="telefono" name="telefono" placeholder="Ej. 809-555-5555" required>
-        
-        <button type="submit" class="btn-submit">Confirmar Registro Obligatorio</button>
+
+    <form id="quizForm">
+        <div id="quizContainer"></div>
+        <button type="button" class="submit-btn" onclick="submitQuiz()">Enviar respuestas</button>
     </form>
 </div>
+
+<script>
+    const quizData = [
+        // Preguntas Principales
+        {
+            q: "¿Qué es una escala musical?",
+            options: [
+                "Una sucesión ordenada de notas musicales.",
+                "Un instrumento de viento de madera.",
+                "El nivel de volumen al que se toca una canción.",
+                "Una figura rítmica que dura cuatro tiempos."
+            ],
+            ans: 0
+        },
+        {
+            q: "¿En qué dos claves suele escribirse una escala musical en el piano?",
+            options: [
+                "Clave de Do y clave de Re.",
+                "Clave mayor y clave menor.",
+                "Clave de Sol y clave de Fa.",
+                "Clave aguda y clave grave."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Qué es un semitono?",
+            options: [
+                "Un instrumento de percusión pequeño.",
+                "La mitad de un tiempo en cualquier compás.",
+                "La distancia más pequeña entre dos notas en la música occidental.",
+                "Un silencio equivalente a una corchea."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Qué es un tono?",
+            options: [
+                "La distancia equivalente a dos semitonos.",
+                "Una nota que se sostiene por 4 tiempos.",
+                "El nivel de volumen de la voz humana al cantar.",
+                "Un tipo de instrumento afinado."
+            ],
+            ans: 0
+        },
+        {
+            q: "¿Cuál es la diferencia principal entre una marcha y un vals?",
+            options: [
+                "La marcha usa exclusivamente violines y el vals trompetas.",
+                "La marcha está en 2/4 o 4/4, mientras que el vals está en 3/4.",
+                "La marcha es extremadamente lenta y el vals es muy rápido.",
+                "La marcha siempre es cantada y el vals siempre es instrumental."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿Qué es una tercera?",
+            options: [
+                "Una nota que dura tres tiempos exactos.",
+                "El tercer movimiento de una sinfonía clásica.",
+                "Un acorde tocado por tres instrumentos a la vez.",
+                "Un intervalo que abarca tres notas de la escala."
+            ],
+            ans: 3
+        },
+        {
+            q: "¿Qué es una quinta?",
+            options: [
+                "Un grupo formado por cinco cantantes.",
+                "Un intervalo que abarca cinco notas de la escala.",
+                "Una figura musical que dura cinco tiempos.",
+                "El quinto compás de cualquier partitura."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿Qué es una octava?",
+            options: [
+                "Un grupo de ocho músicos tocando juntos en armonía.",
+                "Una nota prolongada que dura ocho tiempos.",
+                "Un intervalo entre una nota y otra con el mismo nombre, pero más aguda o grave.",
+                "Un ritmo constante de ocho golpes por minuto."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Cuánto vale una nota negra?",
+            options: [
+                "1 tiempo.",
+                "2 tiempos.",
+                "4 tiempos.",
+                "Medio tiempo."
+            ],
+            ans: 0
+        },
+        {
+            q: "¿Cuánto vale una nota blanca?",
+            options: [
+                "1 tiempo.",
+                "2 tiempos.",
+                "3 tiempos.",
+                "4 tiempos."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿Cuánto vale una redonda?",
+            options: [
+                "1 tiempo.",
+                "2 tiempos.",
+                "4 tiempos.",
+                "8 tiempos."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Cuál de los siguientes es un famoso compositor de música clásica?",
+            options: [
+                "Elvis Presley.",
+                "Pablo Picasso.",
+                "Johann Sebastian Bach.",
+                "Freddie Mercury."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Qué es un oratorio?",
+            options: [
+                "Un lugar en el teatro donde se guardan los instrumentos.",
+                "Una obra musical extensa para solistas, coro y orquesta, generalmente de tema religioso.",
+                "Un tipo de flauta antigua utilizada en el Renacimiento.",
+                "Un poema recitado rítmicamente sin acompañamiento musical."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿Qué es una orquesta?",
+            options: [
+                "Un tipo de piano grande de cola.",
+                "Un escenario giratorio utilizado para conciertos acústicos.",
+                "Un conjunto de músicos que interpretan obras con diversos instrumentos.",
+                "Un libro gigante de partituras exclusivo para el director."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Cuál de las siguientes opciones contiene cinco instrumentos propios de una orquesta sinfónica?",
+            options: [
+                "Guitarra eléctrica, bajo, batería, teclado y micrófono.",
+                "Violín, viola, violonchelo, flauta y trompeta.",
+                "Güira, tambora, acordeón, maracas y congas.",
+                "Saxofón, ukelele, armónica, cajón y castañuelas."
+            ],
+            ans: 1
+        },
+        // Preguntas Difíciles
+        {
+            q: "¿Cuál es el patrón de intervalos de una escala mayor?",
+            options: [
+                "Tono – Semitono – Tono – Semitono – Tono – Tono – Tono.",
+                "Tono – Tono – Semitono – Tono – Tono – Tono – Semitono.",
+                "Semitono – Semitono – Tono – Tono – Tono – Tono – Tono.",
+                "Tono – Tono – Tono – Tono – Semitono – Semitono – Semitono."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿En qué compás se escribe normalmente un vals?",
+            options: [
+                "4/4",
+                "2/4",
+                "3/4",
+                "6/8"
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Cuántos semitonos forman un tono entero?",
+            options: [
+                "1 semitono.",
+                "2 semitonos.",
+                "3 semitonos.",
+                "4 semitonos."
+            ],
+            ans: 1
+        },
+        {
+            q: "¿Cuál es la función principal de un director musical?",
+            options: [
+                "Componer la música en tiempo real mientras los músicos tocan.",
+                "Afinar personalmente todos los instrumentos antes del concierto.",
+                "Guiar y coordinar a los músicos durante la interpretación.",
+                "Organizar la logística del teatro y vender las entradas."
+            ],
+            ans: 2
+        },
+        {
+            q: "¿Qué clave se utiliza comúnmente para escribir las notas más agudas?",
+            options: [
+                "Clave de Fa.",
+                "Clave de Do.",
+                "Clave de Percusión.",
+                "Clave de Sol."
+            ],
+            ans: 3
+        }
+    ];
+
+    const container = document.getElementById('quizContainer');
+
+    // Generar el HTML del cuestionario
+    quizData.forEach((item, index) => {
+        
+        if(index === 0) {
+            const title1 = document.createElement('h2');
+            title1.className = 'section-title';
+            title1.innerText = 'Preguntas de Nivel Básico e Intermedio';
+            container.appendChild(title1);
+        } else if (index === 15) {
+            const title2 = document.createElement('h2');
+            title2.className = 'section-title';
+            title2.innerText = 'Preguntas de Desempate (Avanzadas)';
+            container.appendChild(title2);
+        }
+
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `card-${index}`;
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'question-header';
+
+        const questionTitle = document.createElement('div');
+        questionTitle.className = 'question-title';
+        questionTitle.innerHTML = `<strong>${index + 1}.</strong> ${item.q}`;
+
+        const badge = document.createElement('span');
+        badge.className = 'points-badge';
+        badge.innerText = '1 Punto';
+
+        headerDiv.appendChild(questionTitle);
+        headerDiv.appendChild(badge);
+        
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        item.options.forEach((opt, optIndex) => {
+            const label = document.createElement('label');
+            label.className = 'option-label';
+            
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = `q${index}`;
+            radio.value = optIndex;
+            
+            const span = document.createElement('span');
+            span.innerText = opt;
+
+            label.appendChild(radio);
+            label.appendChild(span);
+            optionsDiv.appendChild(label);
+        });
+
+        const feedback = document.createElement('div');
+        feedback.id = `feedback-${index}`;
+        feedback.className = 'feedback';
+
+        card.appendChild(headerDiv);
+        card.appendChild(optionsDiv);
+        card.appendChild(feedback);
+        container.appendChild(card);
+    });
+
+    function submitQuiz() {
+        let score = 0;
+        let allAnswered = true;
+
+        // Verificar y puntuar
+        quizData.forEach((item, index) => {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            const card = document.getElementById(`card-${index}`);
+            const feedback = document.getElementById(`feedback-${index}`);
+
+            if (!selected) {
+                allAnswered = false;
+                return;
+            }
+
+            // Deshabilitar inputs después de enviar
+            const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+            inputs.forEach(input => input.disabled = true);
+
+            const selectedValue = parseInt(selected.value);
+            
+            if (selectedValue === item.ans) {
+                score++;
+                card.classList.add('correct');
+                feedback.innerText = '✓ ¡Correcto!';
+                feedback.classList.add('correct');
+            } else {
+                card.classList.add('incorrect');
+                feedback.innerHTML = `✗ Incorrecto. La respuesta correcta era: <strong>${item.options[item.ans]}</strong>`;
+                feedback.classList.add('incorrect');
+            }
+        });
+
+        if (!allAnswered) {
+            alert("Por favor, responde a todas las preguntas antes de enviar.");
+            return;
+        }
+
+        // Esconder botón enviar y mostrar resultados fluidamente
+        document.querySelector('.submit-btn').style.display = 'none';
+        
+        const resultsDiv = document.getElementById('results');
+        const scoreValue = document.getElementById('scoreValue');
+        const scoreMessage = document.getElementById('scoreMessage');
+
+        scoreValue.innerText = `${score} / 20`;
+        
+        if (score === 20) {
+            scoreMessage.innerText = "¡Puntuación perfecta! Eres un genio de la música.";
+        } else if (score >= 15) {
+            scoreMessage.innerText = "¡Excelente trabajo! Tienes un conocimiento muy sólido de teoría musical.";
+        } else if (score >= 10) {
+            scoreMessage.innerText = "¡Buen trabajo! Aprobaste, pero siempre hay espacio para aprender más.";
+        } else {
+            scoreMessage.innerText = "Sigue practicando, la teoría musical toma tiempo en dominarse.";
+        }
+
+        resultsDiv.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
 
 </body>
 </html>
