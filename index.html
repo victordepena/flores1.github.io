@@ -121,6 +121,53 @@
             border: 1px solid rgba(0, 255, 204, 0.2);
         }
 
+        /* Estilo para el input de texto de Identificación */
+        .name-input-container {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .name-input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            font-family: inherit;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-light);
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .text-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .text-input::placeholder {
+            color: rgba(197, 198, 199, 0.5);
+        }
+
+        .text-input:disabled {
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(197, 198, 199, 0.4);
+            border-color: rgba(255, 255, 255, 0.05);
+            cursor: not-allowed;
+        }
+
         .options {
             display: flex;
             flex-direction: column;
@@ -313,6 +360,12 @@
     <div class="header-card">
         <h1>Cuestionario de Teoría Musical</h1>
         <p>Demuestra tus conocimientos musicales respondiendo estas 20 preguntas. Al finalizar, haz clic en "Enviar" para ver tu puntuación.</p>
+        
+        <!-- Campo para agregar nombre -->
+        <div class="name-input-container">
+            <label for="student-name" class="name-input-label">Nombre Completo del Estudiante:</label>
+            <input type="text" id="student-name" class="text-input" placeholder="Ingresa tu nombre y apellido aquí" required autocomplete="off">
+        </div>
     </div>
 
     <div id="results">
@@ -482,7 +535,7 @@
             ans: 1
         },
         {
-            q: "¿Cuánto vale una redonda?",
+            q: "9. ¿Cuánto vale una redonda?",
             options: [
                 "1 tiempo.",
                 "2 tiempos.",
@@ -650,19 +703,41 @@
     });
 
     function submitQuiz() {
+        const nameInput = document.getElementById('student-name');
+        const studentName = nameInput.value.trim();
+
+        // Validar que el alumno haya ingresado su nombre
+        if (!studentName) {
+            alert("Por favor, ingresa tu nombre completo antes de enviar el cuestionario.");
+            nameInput.focus();
+            return;
+        }
+
         let score = 0;
         let allAnswered = true;
+
+        // Verificar si se han respondido todas las preguntas
+        for (let index = 0; index < quizData.length; index++) {
+            const selected = document.querySelector(`input[name="q${index}"]:checked`);
+            if (!selected) {
+                allAnswered = false;
+                break;
+            }
+        }
+
+        if (!allAnswered) {
+            alert("Por favor, responde a todas las preguntas antes de enviar.");
+            return;
+        }
+
+        // Deshabilitar el input de nombre tras el envío legítimo
+        nameInput.disabled = true;
 
         // Verificar y puntuar
         quizData.forEach((item, index) => {
             const selected = document.querySelector(`input[name="q${index}"]:checked`);
             const card = document.getElementById(`card-${index}`);
             const feedback = document.getElementById(`feedback-${index}`);
-
-            if (!selected) {
-                allAnswered = false;
-                return;
-            }
 
             // Deshabilitar inputs después de enviar
             const inputs = document.querySelectorAll(`input[name="q${index}"]`);
@@ -682,11 +757,6 @@
             }
         });
 
-        if (!allAnswered) {
-            alert("Por favor, responde a todas las preguntas antes de enviar.");
-            return;
-        }
-
         // Marca como completado para desactivar el anti-trampas y persistir en storage
         isQuizSubmitted = true; 
         localStorage.setItem('quiz_status', 'completed');
@@ -701,13 +771,13 @@
         scoreValue.innerText = `${score} / 20`;
         
         if (score === 20) {
-            scoreMessage.innerText = "¡Puntuación perfecta! Eres un genio de la música.";
+            scoreMessage.innerHTML = `¡Puntuación perfecta, <strong>${studentName}</strong>! Eres un genio de la música.`;
         } else if (score >= 15) {
-            scoreMessage.innerText = "¡Excelente trabajo! Tienes un conocimiento muy sólido de teoría musical.";
+            scoreMessage.innerHTML = `¡Excelente trabajo, <strong>${studentName}</strong>! Tienes un conocimiento muy sólido de teoría musical.`;
         } else if (score >= 10) {
-            scoreMessage.innerText = "¡Buen trabajo! Aprobaste, pero siempre hay espacio para aprender más.";
+            scoreMessage.innerHTML = `¡Buen trabajo, <strong>${studentName}</strong>! Aprobaste, pero siempre hay espacio para aprender más.`;
         } else {
-            scoreMessage.innerText = "Sigue practicando, la teoría musical toma tiempo en dominarse.";
+            scoreMessage.innerHTML = `Sigue practicando, <strong>${studentName}</strong>. La teoría musical toma tiempo en dominarse.`;
         }
 
         resultsDiv.style.display = 'block';
