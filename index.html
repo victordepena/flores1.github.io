@@ -228,7 +228,7 @@
             font-weight: 500;
             padding: 12px;
             border-radius: 8px;
-            display: none; /* Oculto por defecto */
+            display: none;
         }
 
         .feedback.correct { 
@@ -265,9 +265,49 @@
             margin: 10px auto 0;
             border-radius: 2px;
         }
+
+        /* Sistema Anti-Trampas */
+        #cheat-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 12, 16, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #cheat-overlay h1 {
+            color: var(--incorrect-color);
+            font-size: 50px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+        }
+
+        #cheat-overlay p {
+            color: var(--text-light);
+            font-size: 20px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
+
+<div id="cheat-overlay">
+    <h1>¡Descalificado!</h1>
+    <p>Hemos detectado que saliste de la pestaña o perdiste el enfoque de la ventana. Por motivos de integridad y para evitar consultas externas, el cuestionario ha sido bloqueado y tu intento queda anulado.</p>
+</div>
 
 <div class="container">
     <div class="header-card">
@@ -289,6 +329,29 @@
 </div>
 
 <script>
+    let isQuizSubmitted = false;
+
+    // Eventos Anti-Trampas
+    // Detecta si cambia a otra pestaña o minimiza el navegador
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden && !isQuizSubmitted) {
+            triggerAntiCheat();
+        }
+    });
+
+    // Detecta si hace clic fuera de la ventana del navegador
+    window.addEventListener("blur", () => {
+        if (!isQuizSubmitted) {
+            triggerAntiCheat();
+        }
+    });
+
+    function triggerAntiCheat() {
+        document.getElementById('cheat-overlay').style.display = 'flex';
+        document.querySelector('.container').style.display = 'none';
+        document.body.style.overflow = 'hidden'; // Evita hacer scroll
+    }
+
     const quizData = [
         // Preguntas Principales
         {
@@ -596,6 +659,9 @@
             alert("Por favor, responde a todas las preguntas antes de enviar.");
             return;
         }
+
+        // Marca como completado para desactivar el anti-trampas
+        isQuizSubmitted = true; 
 
         // Esconder botón enviar y mostrar resultados fluidamente
         document.querySelector('.submit-btn').style.display = 'none';
