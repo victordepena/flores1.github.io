@@ -305,8 +305,8 @@
 <body>
 
 <div id="cheat-overlay">
-    <h1>¡Descalificado!</h1>
-    <p>Hemos detectado que saliste de la pestaña o perdiste el enfoque de la ventana. Por motivos de integridad y para evitar consultas externas, el cuestionario ha sido bloqueado y tu intento queda anulado.</p>
+    <h1 id="cheat-title">¡Descalificado!</h1>
+    <p id="cheat-reason">Hemos detectado que saliste de la pestaña o perdiste el enfoque de la ventana. Por motivos de integridad y para evitar consultas externas, el cuestionario ha sido bloqueado y tu intento queda anulado.</p>
 </div>
 
 <div class="container">
@@ -319,7 +319,6 @@
         <h2>Tu Puntuación</h2>
         <div class="score-display" id="scoreValue">0 / 20</div>
         <p id="scoreMessage"></p>
-        <button class="submit-btn" onclick="location.reload()" style="margin-top: 20px; margin-bottom: 0;">Reintentar Cuestionario</button>
     </div>
 
     <form id="quizForm">
@@ -331,23 +330,51 @@
 <script>
     let isQuizSubmitted = false;
 
+    // Verificación de LocalStorage al cargar la página (Detecta recargas y sesiones previas)
+    window.onload = () => {
+        const status = localStorage.getItem('quiz_status');
+        
+        if (status === 'disqualified') {
+            triggerAntiCheat("Has sido descalificado previamente. No puedes volver a intentar.", "¡Acceso Denegado!");
+        } else if (status === 'started') {
+            // Si ya estaba en 'started' al cargar la página, significa que recargó el navegador
+            triggerAntiCheat("Recargar la página no está permitido durante el cuestionario. Tu intento ha sido anulado.", "¡Descalificado!");
+        } else if (status === 'completed') {
+            // Si ya lo completó legítimamente, no lo dejamos repetirlo
+            triggerAntiCheat("Ya has completado este cuestionario. No se permiten múltiples intentos.", "¡Cuestionario Finalizado!");
+            document.getElementById('cheat-title').style.color = 'var(--secondary-color)';
+            document.getElementById('cheat-title').style.textShadow = '0 0 20px rgba(0, 255, 204, 0.5)';
+        } else {
+            // Es la primera vez que entra
+            localStorage.setItem('quiz_status', 'started');
+        }
+    };
+
     // Eventos Anti-Trampas
     // Detecta si cambia a otra pestaña o minimiza el navegador
     document.addEventListener("visibilitychange", () => {
         if (document.hidden && !isQuizSubmitted) {
-            triggerAntiCheat();
+            triggerAntiCheat("Hemos detectado que saliste de la pestaña para consultar información.", "¡Descalificado!");
         }
     });
 
     // Detecta si hace clic fuera de la ventana del navegador
     window.addEventListener("blur", () => {
         if (!isQuizSubmitted) {
-            triggerAntiCheat();
+            triggerAntiCheat("Perdiste el enfoque de la ventana del cuestionario.", "¡Descalificado!");
         }
     });
 
-    function triggerAntiCheat() {
-        document.getElementById('cheat-overlay').style.display = 'flex';
+    function triggerAntiCheat(reasonText, titleText) {
+        if (!isQuizSubmitted && localStorage.getItem('quiz_status') !== 'completed') {
+            localStorage.setItem('quiz_status', 'disqualified');
+        }
+
+        const overlay = document.getElementById('cheat-overlay');
+        if (titleText) document.getElementById('cheat-title').innerText = titleText;
+        if (reasonText) document.getElementById('cheat-reason').innerText = reasonText;
+        
+        overlay.style.display = 'flex';
         document.querySelector('.container').style.display = 'none';
         document.body.style.overflow = 'hidden'; // Evita hacer scroll
     }
@@ -660,8 +687,9 @@
             return;
         }
 
-        // Marca como completado para desactivar el anti-trampas
+        // Marca como completado para desactivar el anti-trampas y persistir en storage
         isQuizSubmitted = true; 
+        localStorage.setItem('quiz_status', 'completed');
 
         // Esconder botón enviar y mostrar resultados fluidamente
         document.querySelector('.submit-btn').style.display = 'none';
